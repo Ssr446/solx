@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SOLX – Sarcasm & Online harm Locator with eXplainability</title>
+  <meta name="description" content="SOLX is an AI-powered Tanglish cyberbullying and sarcasm detector that understands Tamil pop-culture references and normalizes Tanglish spelling variations. Built by Team Inferno."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23030603'/><rect width='32' height='32' rx='6' fill='none' stroke='%2339FF14' stroke-width='1.5' opacity='0.6'/><text x='50%25' y='53%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-weight='900' font-size='13' fill='%2339FF14' letter-spacing='-1'>SX</text><circle cx='6' cy='6' r='1.2' fill='%2339FF14' opacity='0.5'/></svg>"/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    /* ── CSS Reset & Base ────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-900:     #030603;
+      --bg-800:     #060D06;
+      --bg-700:     #0A120A;
+      --bg-600:     #0F190F;
+      --glass:      rgba(8, 18, 8, 0.78);
+      --border:     rgba(57, 255, 20, 0.14);
+      --blue-400:   #39FF14;
+      --blue-500:   #2CE010;
+      --blue-600:   #1AB008;
+      --violet-400: #C8FF00;
+      --violet-500: #A8D800;
+      --teal-400:   #ADFF2F;
+      --red-400:    #FF4545;
+      --amber-400:  #FFD700;
+      --green-400:  #39FF14;
+      --text-100:   #E8FFE0;
+      --text-300:   #7AAB6E;
+      --text-500:   #3D5E37;
+      --glow-blue:  0 0 40px rgba(57,255,20,0.2);
+      --glow-violet:0 0 40px rgba(200,255,0,0.18);
+      --radius-lg:  16px;
+      --radius-xl:  24px;
+      --transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg-900);
+      color: var(--text-100);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Scanline overlay for hacker effect ──────────────────────────────── */
+    body::after {
+      content: '';
+      position: fixed; inset: 0; z-index: 9999;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.04) 2px,
+        rgba(0,0,0,0.04) 4px
+      );
+    }
+
+    /* ── Animated background ─────────────────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: -1;
+      background:
+        radial-gradient(ellipse 70% 50% at 15% 10%, rgba(57,255,20,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 85% 80%, rgba(200,255,0,0.06) 0%, transparent 55%),
+        radial-gradient(ellipse 80% 60% at 50% 50%, rgba(3,6,3,0.95) 0%, transparent 100%);
+    }
+
+    /* ── NAV ─────────────────────────────────────────────────────────────── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2.5rem;
+      height: 68px;
+      background: rgba(3, 6, 3, 0.92);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 1.35rem; font-weight: 800; letter-spacing: 2px;
+      color: var(--blue-400);
+      text-shadow: 0 0 20px rgba(57,255,20,0.6);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .nav-logo .shield { font-size: 1.5rem; }
+    .nav-logo span { color: var(--text-300); font-weight: 400; font-size: 0.85rem; margin-left:4px; font-family: 'Outfit', sans-serif; letter-spacing: 0; }
+
+    .nav-badge {
+      background: linear-gradient(135deg, rgba(57,255,20,0.15), rgba(200,255,0,0.1));
+      border: 1px solid rgba(57,255,20,0.35);
+      color: var(--blue-400);
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em;
+      padding: 4px 12px; border-radius: 100px;
+      text-transform: uppercase;
+    }
+
+    .nav-links { display: flex; gap: 2rem; align-items: center; }
+    .nav-links a {
+      color: var(--text-300); text-decoration: none;
+      font-size: 0.9rem; font-weight: 500;
+      transition: var(--transition);
+    }
+    .nav-links a:hover { color: var(--blue-400); text-shadow: 0 0 12px rgba(57,255,20,0.5); }
+
+    /* ── HERO ─────────────────────────────────────────────────────────────── */
+    .hero {
+      text-align: center;
+      padding: 6rem 2rem 4rem;
+      position: relative;
+    }
+
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(57,255,20,0.07);
+      border: 1px solid rgba(57,255,20,0.3);
+      color: var(--blue-400);
+      font-size: 0.78rem; font-weight: 600; letter-spacing: 0.1em;
+      padding: 6px 16px; border-radius: 100px;
+      margin-bottom: 1.5rem;
+      text-transform: uppercase;
+    }
+    .hero-tag::before { content: '●'; font-size: 0.5rem; animation: pulse-dot 1.5s ease-in-out infinite; color: var(--blue-400); }
+    @keyframes pulse-dot {
+      0%,100% { opacity: 1; } 50% { opacity: 0.3; }
+    }
+
+    .hero h1 {
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      font-weight: 800; line-height: 1.1;
+      letter-spacing: -2px; margin-bottom: 1rem;
+      color: var(--text-100);
+    }
+    .hero h1 .grad {
+      background: linear-gradient(135deg, #39FF14 0%, #C8FF00 50%, #ADFF2F 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 30px rgba(57,255,20,0.4));
+    }
+
+    .hero-sub {
+      font-size: 1.05rem; color: var(--text-300);
+      max-width: 620px; margin: 0 auto 2.5rem; line-height: 1.7;
+    }
+
+    .hero-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 3rem; }
+    .pill {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--glass); border: 1px solid var(--border);
+      padding: 7px 16px; border-radius: 100px;
+      font-size: 0.82rem; font-weight: 500; color: var(--text-300);
+      backdrop-filter: blur(12px);
+    }
+    .pill .dot { width: 7px; height: 7px; border-radius: 50%; }
+    .pill .dot.blue  { background: #39FF14; box-shadow: 0 0 10px #39FF14; }
+    .pill .dot.violet{ background: #C8FF00; box-shadow: 0 0 10px #C8FF00; }
+    .pill .dot.teal  { background: #ADFF2F; box-shadow: 0 0 10px #ADFF2F; }
+
+    .scroll-cta {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: linear-gradient(135deg, #1AB008, #2CE010);
+      color: #030603; font-weight: 800; font-size: 0.95rem;
+      padding: 14px 32px; border-radius: 100px;
+      text-decoration: none; border: none; cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 4px 30px rgba(57,255,20,0.45);
+      letter-spacing: 0.03em;
+    }
+    .scroll-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 50px rgba(57,255,20,0.65);
+    }
+
+    /* ── STATS BAR ───────────────────────────────────────────────────────── */
+    .stats-bar {
+      display: flex; justify-content: center; gap: 0;
+      padding: 2rem;
+      background: var(--glass);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(20px);
+    }
+    .stat {
+      flex: 1; max-width: 200px;
+      text-align: center; padding: 0.5rem 1rem;
+      border-right: 1px solid var(--border);
+    }
+    .stat:last-child { border-right: none; }
+    .stat-value { font-size: 1.9rem; font-weight: 800; line-height: 1; font-family: 'JetBrains Mono', monospace; }
+    .stat-label { font-size: 0.75rem; color: var(--text-300); margin-top: 4px; letter-spacing: 0.05em; }
+
+    /* ── HOW IT WORKS ────────────────────────────────────────────────────── */
+    .section { padding: 5rem 2rem; max-width: 1100px; margin: 0 auto; }
+    .section-tag {
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--blue-400); margin-bottom: 0.8rem;
+    }
+    .section-title {
+      font-size: clamp(1.6rem, 3vw, 2.3rem);
+      font-weight: 800; letter-spacing: -0.5px; margin-bottom: 0.7rem;
+    }
+    .section-sub { color: var(--text-300); font-size: 1rem; line-height: 1.7; max-width: 560px; }
+
+    .steps-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem; margin-top: 3rem;
+    }
+    .step-card {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 2rem;
+      backdrop-filter: blur(20px);
+      transition: var(--transition);
+      position: relative; overflow: hidden;
+    }
+    .step-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    }
+    .step-card.s1::before { background: linear-gradient(90deg, #1AB008, #39FF14); }
+    .step-card.s2::before { background: linear-gradient(90deg, #A8D800, #C8FF00); }
+    .step-card.s3::before { background: linear-gradient(90deg, #6ECC00, #ADFF2F); }
+
+    .step-card:hover { transform: translateY(-4px); border-color: rgba(57,255,20,0.3); box-shadow: var(--glow-blue); }
+    .step-num {
+      width: 40px; height: 40px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 1rem; margin-bottom: 1.2rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .s1 .step-num { background: rgba(57,255,20,0.12); color: #39FF14; border: 1px solid rgba(57,255,20,0.25); }
+    .s2 .step-num { background: rgba(200,255,0,0.12); color: #C8FF00; border: 1px solid rgba(200,255,0,0.25); }
+    .s3 .step-num { background: rgba(173,255,47,0.12); color: #ADFF2F; border: 1px solid rgba(173,255,47,0.25); }
+    .step-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .step-card p  { font-size: 0.88rem; color: var(--text-300); line-height: 1.65; }
+    .step-tag {
+      display: inline-block; margin-top: 1rem;
+      font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; padding: 3px 10px; border-radius: 100px;
+    }
+    .s1 .step-tag { background: rgba(57,255,20,0.1); color: #39FF14; border: 1px solid rgba(57,255,20,0.2); }
+    .s2 .step-tag { background: rgba(200,255,0,0.1); color: #C8FF00; border: 1px solid rgba(200,255,0,0.2); }
+    .s3 .step-tag { background: rgba(173,255,47,0.1); color: #ADFF2F; border: 1px solid rgba(173,255,47,0.2); }
+
+    /* ── DEMO SECTION ───────────────────────────────────────────────────── */
+    #demo { padding: 4rem 2rem 6rem; max-width: 1100px; margin: 0 auto; }
+    .demo-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2.5rem;
+    }
+
+    /* Input Panel */
+    .panel {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      backdrop-filter: blur(20px);
+      overflow: hidden;
+    }
+    .panel-header {
+      padding: 1.1rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+      font-size: 0.82rem; font-weight: 600; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--text-300);
+    }
+    .panel-header .icon { font-size: 1rem; }
+    .panel-body { padding: 1.5rem; }
+
+    #comment-input {
+      width: 100%; min-height: 130px;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      color: #39FF14;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem; line-height: 1.7;
+      padding: 1rem; resize: vertical;
+      transition: var(--transition); outline: none;
+      caret-color: #39FF14;
+    }
+    #comment-input:focus { border-color: rgba(57,255,20,0.5); box-shadow: 0 0 0 3px rgba(57,255,20,0.08), 0 0 20px rgba(57,255,20,0.1) inset; }
+    #comment-input::placeholder { color: var(--text-500); }
+
+    .example-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 1rem; }
+    .chip {
+      background: rgba(57,255,20,0.05);
+      border: 1px solid var(--border);
+      color: var(--text-300); font-size: 0.75rem;
+      padding: 5px 12px; border-radius: 100px;
+      cursor: pointer; transition: var(--transition);
+    }
+    .chip:hover {
+      background: rgba(57,255,20,0.12);
+      border-color: #39FF14; color: #39FF14;
+      text-shadow: 0 0 8px rgba(57,255,20,0.5);
+    }
+
+    #analyze-btn {
+      width: 100%; margin-top: 1.2rem;
+      background: linear-gradient(135deg, #1AB008, #2CE010);
+      color: #030603; font-family: 'Outfit', sans-serif;
+      font-weight: 800; font-size: 0.95rem;
+      padding: 13px 24px; border-radius: var(--radius-lg);
+      border: none; cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 4px 24px rgba(57,255,20,0.35);
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      letter-spacing: 0.03em;
+    }
+    #analyze-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 36px rgba(57,255,20,0.6); }
+    #analyze-btn:active { transform: translateY(0); }
+    #analyze-btn .btn-icon { font-size: 1.1rem; }
+
+    /* Normalizer badge */
+    .normalizer-out {
+      display: none; margin-top: 1rem;
+      background: rgba(57,255,20,0.05);
+      border: 1px solid rgba(57,255,20,0.2);
+      border-radius: var(--radius-lg); padding: 1rem;
+    }
+    .normalizer-out.visible { display: block; animation: fade-up 0.4s ease; }
+    .normalizer-label {
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: #39FF14; margin-bottom: 0.5rem;
+    }
+    .normalizer-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem; color: #39FF14; line-height: 1.6;
+    }
+    .normalizer-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 0.7rem; }
+    .norm-tag {
+      background: rgba(57,255,20,0.1); border: 1px solid rgba(57,255,20,0.25);
+      color: #39FF14; font-size: 0.68rem; font-weight: 600;
+      padding: 2px 9px; border-radius: 100px;
+    }
+
+    /* Output Panel */
+    .output-panel { display: flex; flex-direction: column; gap: 1rem; }
+
+    .score-card {
+      background: var(--glass); border: 1px solid var(--border);
+      border-radius: var(--radius-xl); backdrop-filter: blur(20px);
+      padding: 1.5rem; display: flex; align-items: center; gap: 1.5rem;
+      display: none; animation: fade-up 0.5s ease;
+    }
+    .score-card.visible { display: flex; }
+
+    .score-ring {
+      flex-shrink: 0; position: relative; width: 90px; height: 90px;
+    }
+    .score-ring svg { transform: rotate(-90deg); }
+    .ring-bg { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 7; }
+    .ring-fill {
+      fill: none; stroke-width: 7; stroke-linecap: round;
+      transition: stroke-dashoffset 1s cubic-bezier(0.4,0,0.2,1);
+    }
+    .score-center {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .score-num { font-size: 1.4rem; font-weight: 800; line-height: 1; font-family: 'JetBrains Mono', monospace; }
+    .score-pct { font-size: 0.65rem; color: var(--text-300); font-weight: 500; }
+
+    .score-info { flex: 1; }
+    .score-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-300); margin-bottom: 0.4rem; }
+    .score-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.6rem; }
+
+    .badges { display: flex; flex-wrap: wrap; gap: 6px; }
+    .badge {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em;
+      padding: 4px 12px; border-radius: 100px;
+    }
+    .badge.toxic   { background: rgba(255,69,69,0.12);  border: 1px solid rgba(255,69,69,0.35);   color: #FF4545; }
+    .badge.sarcasm { background: rgba(255,215,0,0.12);  border: 1px solid rgba(255,215,0,0.35);   color: #FFD700; }
+    .badge.bully   { background: rgba(200,255,0,0.12);  border: 1px solid rgba(200,255,0,0.35);   color: #C8FF00; }
+    .badge.clean   { background: rgba(57,255,20,0.12);  border: 1px solid rgba(57,255,20,0.35);   color: #39FF14; }
+    .badge .badge-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+
+    /* Context card */
+    .context-card {
+      background: var(--glass); border: 1px solid var(--border);
+      border-radius: var(--radius-xl); backdrop-filter: blur(20px);
+      overflow: hidden; display: none;
+    }
+    .context-card.visible { display: block; animation: fade-up 0.6s ease; }
+    .context-header {
+      padding: 1rem 1.5rem;
+      background: linear-gradient(90deg, rgba(255,215,0,0.08), rgba(57,255,20,0.05));
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: #FFD700;
+    }
+    .context-body { padding: 1.5rem; }
+    .context-ref {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--text-500); margin-bottom: 0.4rem;
+    }
+    .context-phrase {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1rem; font-weight: 500;
+      color: #FFD700; margin-bottom: 0.9rem;
+      padding: 0.6rem 1rem;
+      background: rgba(255,215,0,0.06);
+      border-left: 3px solid #FFD700;
+      border-radius: 0 8px 8px 0;
+    }
+    .context-explanation {
+      font-size: 0.9rem; color: var(--text-300); line-height: 1.65; margin-bottom: 1rem;
+    }
+    .context-meta { display: flex; flex-wrap: wrap; gap: 6px; }
+    .meta-tag {
+      font-size: 0.7rem; font-weight: 600;
+      padding: 3px 10px; border-radius: 100px;
+      background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+      color: var(--text-300);
+    }
+
+    /* Clean state */
+    .clean-card {
+      background: var(--glass); border: 1px solid rgba(57,255,20,0.25);
+      border-radius: var(--radius-xl); backdrop-filter: blur(20px);
+      padding: 2rem; text-align: center; display: none;
+      box-shadow: 0 0 30px rgba(57,255,20,0.06);
+    }
+    .clean-card.visible { display: block; animation: fade-up 0.5s ease; }
+    .clean-icon { font-size: 2.5rem; margin-bottom: 0.8rem; }
+    .clean-title { font-size: 1.1rem; font-weight: 700; color: #39FF14; margin-bottom: 0.4rem; text-shadow: 0 0 15px rgba(57,255,20,0.5); }
+    .clean-sub { font-size: 0.88rem; color: var(--text-300); }
+
+    /* Loading */
+    .loader {
+      display: none; padding: 3rem; text-align: center;
+      background: var(--glass); border: 1px solid var(--border);
+      border-radius: var(--radius-xl); backdrop-filter: blur(20px);
+    }
+    .loader.visible { display: block; animation: fade-up 0.3s ease; }
+    .spinner {
+      width: 40px; height: 40px; border-radius: 50%;
+      border: 3px solid rgba(57,255,20,0.12);
+      border-top-color: #39FF14;
+      margin: 0 auto 1rem; animation: spin 0.8s linear infinite;
+      box-shadow: 0 0 15px rgba(57,255,20,0.3);
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loader-text { color: var(--text-300); font-size: 0.9rem; }
+    .loader-text span { display: block; font-size: 0.75rem; color: var(--text-500); margin-top: 4px; }
+
+    /* ── FEATURES ───────────────────────────────────────────────────────── */
+    .features-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.2rem; margin-top: 2.5rem;
+    }
+    .feature-card {
+      background: var(--glass); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); backdrop-filter: blur(20px);
+      padding: 1.5rem; transition: var(--transition);
+    }
+    .feature-card:hover { transform: translateY(-3px); border-color: rgba(57,255,20,0.3); box-shadow: 0 0 30px rgba(57,255,20,0.1); }
+    .feature-icon { font-size: 1.8rem; margin-bottom: 0.9rem; }
+    .feature-card h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .feature-card p  { font-size: 0.82rem; color: var(--text-300); line-height: 1.6; }
+
+    /* ── FOOTER ─────────────────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border); text-align: center;
+      padding: 2.5rem 2rem; color: var(--text-500); font-size: 0.82rem;
+    }
+    footer strong { color: var(--text-300); }
+    .footer-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 1rem; }
+    .footer-tag {
+      background: var(--glass); border: 1px solid var(--border);
+      color: var(--text-500); font-size: 0.7rem; padding: 3px 10px; border-radius: 100px;
+    }
+
+    /* ── Animations ─────────────────────────────────────────────────────── */
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in { animation: fade-up 0.6s ease both; }
+
+    /* ── Responsive ─────────────────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .demo-grid { grid-template-columns: 1fr; }
+      .nav-links  { display: none; }
+      .stats-bar  { flex-wrap: wrap; }
+      .stat { border-right: none; border-bottom: 1px solid var(--border); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── NAV ──────────────────────────────────────────────────────────────── -->
+  <nav>
+    <div class="nav-logo">
+      SOLX
+      <span>by Team Inferno</span>
+    </div>
+    <div class="nav-links">
+      <a href="#how-it-works">How It Works</a>
+      <a href="#demo">Live Demo</a>
+      <a href="#features">Features</a>
+    </div>
+  </nav>
+
+  <!-- ── HERO ─────────────────────────────────────────────────────────────── -->
+  <section class="hero fade-in">
+    <div class="hero-tag">Tamil Digital Safety • AI-Powered</div>
+    <h1>
+      Detect Toxicity in<br/>
+      <span class="grad">Tanglish, Natively.</span>
+    </h1>
+    <p class="hero-backronym" style="font-size:0.82rem;letter-spacing:0.08em;color:var(--violet-400);font-weight:600;margin-bottom:0.6rem;">
+      <span style="color:var(--blue-400)">S</span>arcasm &amp; <span style="color:var(--blue-400)">O</span>nline harm <span style="color:var(--blue-400)">L</span>ocator with e<span style="color:var(--blue-400)">X</span>plainability
+    </p>
+    <p class="hero-sub">
+      SOLX understands the cultural nuances, pop-culture sarcasm, and spelling chaos of modern Tanglish — so your platform doesn't have to guess.
+    </p>
+    <div class="hero-pills">
+      <div class="pill"><span class="dot blue"></span>Tanglish Toxicity Detection</div>
+      <div class="pill"><span class="dot violet"></span>Pop-Culture Sarcasm Explainer</div>
+      <div class="pill"><span class="dot teal"></span>Typo & Slang Normalizer</div>
+    </div>
+    <a href="#demo" class="scroll-cta">
+      <span class="btn-icon">⚡</span> Try the Live Demo
+    </a>
+  </section>
+
+  <!-- ── STATS BAR ─────────────────────────────────────────────────────────── -->
+  <div class="stats-bar fade-in">
+    <div class="stat">
+      <div class="stat-value" style="color:#39FF14">50+</div>
+      <div class="stat-label">Spelling Variants Handled</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value" style="color:#C8FF00">3</div>
+      <div class="stat-label">Detection Categories</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value" style="color:#ADFF2F">100+</div>
+      <div class="stat-label">Pop-Culture References</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value" style="color:#FFD700">Tamil</div>
+      <div class="stat-label">Native Language Support</div>
+    </div>
+  </div>
+
+  <!-- ── HOW IT WORKS ──────────────────────────────────────────────────────── -->
+  <section class="section" id="how-it-works">
+    <div class="section-tag">Pipeline</div>
+    <h2 class="section-title">How KavalAI Works</h2>
+    <p class="section-sub">A three-stage AI pipeline purpose-built for the complexities of Tanglish online communication.</p>
+
+    <div class="steps-grid">
+      <div class="step-card s1 fade-in">
+        <div class="step-num">01</div>
+        <h3>Typo & Slang Normalization</h3>
+        <p>Phonetic mapping and character-level embeddings standardize dozens of spelling variations ("enna", "yenna", "ena") into a unified root form before classification.</p>
+        <span class="step-tag">Preprocessing Layer</span>
+      </div>
+      <div class="step-card s2 fade-in">
+        <div class="step-num">02</div>
+        <h3>Multi-Label Classification</h3>
+        <p>A fine-tuned transformer model classifies the normalized text into Toxic, Sarcastic, or Cyberbullying categories with a confidence score for each label.</p>
+        <span class="step-tag">Core NLP Model</span>
+      </div>
+      <div class="step-card s3 fade-in">
+        <div class="step-num">03</div>
+        <h3>Cultural Context Explainer</h3>
+        <p>When sarcasm is detected, a knowledge-base lookup identifies the Tamil movie dialogue, meme template, or cultural reference being used — and explains its intent to the moderator.</p>
+        <span class="step-tag">Explainable AI Layer</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── LIVE DEMO ─────────────────────────────────────────────────────────── -->
+  <section id="demo" style="padding: 4rem 2rem 6rem; max-width: 1100px; margin: 0 auto;">
+    <div class="section-tag">Interactive Demo</div>
+    <h2 class="section-title">Try KavalAI</h2>
+    <p class="section-sub">Type a Tanglish comment below, or click an example to see the AI pipeline in action.</p>
+
+    <div class="demo-grid" style="margin-top:2.5rem;">
+
+      <!-- INPUT PANEL -->
+      <div>
+        <div class="panel">
+          <div class="panel-header">
+            <span class="icon">✏️</span> Input Comment
+          </div>
+          <div class="panel-body">
+            <textarea
+              id="comment-input"
+              placeholder="Type a Tanglish comment here... (e.g. 'Avaru periya Appatakar da')"
+            ></textarea>
+
+            <div class="example-chips">
+              <div class="chip" onclick="loadExample(0)">🧪 Avaru periya Appatakar</div>
+              <div class="chip" onclick="loadExample(1)">🧪 Yenna koduma saravanan idhu</div>
+              <div class="chip" onclick="loadExample(2)">🧪 Super da machaan, keep it up!</div>
+              <div class="chip" onclick="loadExample(3)">🧪 Dei nee enna panna pore</div>
+            </div>
+
+            <button id="analyze-btn" onclick="analyze()">
+              <span class="btn-icon">🧠</span> Analyze Comment
+            </button>
+
+            <!-- Normalizer output -->
+            <div class="normalizer-out" id="normalizer-out">
+              <div class="normalizer-label">🔄 Normalized Text</div>
+              <div class="normalizer-text" id="normalized-text"></div>
+              <div class="normalizer-tags" id="norm-tags"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- OUTPUT PANEL -->
+      <div class="output-panel">
+        <!-- Loader -->
+        <div class="loader" id="loader">
+          <div class="spinner"></div>
+          <div class="loader-text">
+            Analyzing…
+            <span id="loader-stage">Running Typo Normalizer</span>
+          </div>
+        </div>
+
+        <!-- Score card -->
+        <div class="score-card" id="score-card">
+          <div class="score-ring">
+            <svg width="90" height="90" viewBox="0 0 90 90">
+              <circle class="ring-bg" cx="45" cy="45" r="38"/>
+              <circle class="ring-fill" id="ring-fill" cx="45" cy="45" r="38"
+                stroke-dasharray="238.76" stroke-dashoffset="238.76"/>
+            </svg>
+            <div class="score-center">
+              <div class="score-num" id="score-num">0</div>
+              <div class="score-pct">%</div>
+            </div>
+          </div>
+          <div class="score-info">
+            <div class="score-label">Threat Assessment</div>
+            <div class="score-title" id="score-title">—</div>
+            <div class="badges" id="badges"></div>
+          </div>
+        </div>
+
+        <!-- Context card -->
+        <div class="context-card" id="context-card">
+          <div class="context-header">
+            🎬 Pop-Culture Context Explainer
+          </div>
+          <div class="context-body">
+            <div class="context-ref">Detected Reference</div>
+            <div class="context-phrase" id="ctx-phrase"></div>
+            <div class="context-explanation" id="ctx-explanation"></div>
+            <div class="context-meta" id="ctx-meta"></div>
+          </div>
+        </div>
+
+        <!-- Clean card -->
+        <div class="clean-card" id="clean-card">
+          <div class="clean-icon">✅</div>
+          <div class="clean-title">Comment is Clean</div>
+          <div class="clean-sub">No toxicity, sarcasm, or cyberbullying detected.<br/>This comment is safe to publish.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FEATURES ──────────────────────────────────────────────────────────── -->
+  <section class="section" id="features" style="padding-top:0;">
+    <div class="section-tag">Capabilities</div>
+    <h2 class="section-title">What Makes KavalAI Different</h2>
+    <p class="section-sub">Built specifically for the linguistic challenges of Tamil-English code-switching.</p>
+
+    <div class="features-grid" style="margin-top:2.5rem;">
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🔤</div>
+        <h3>Tanglish-Native NLP</h3>
+        <p>Phonetic normalization handles dozens of spelling variants per word, solving the core challenge of Tanglish's non-standard orthography.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🎭</div>
+        <h3>Sarcasm Detection</h3>
+        <p>Context-aware model goes beyond keyword matching to detect culturally nuanced sarcasm that generic models completely miss.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🎬</div>
+        <h3>Cultural Context Engine</h3>
+        <p>Identifies Tamil movie dialogues, meme templates, and regional references used as vehicles for mockery or harassment.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🏷️</div>
+        <h3>Multi-Label Classification</h3>
+        <p>A single comment can be flagged simultaneously as Toxic + Sarcastic + Body Shaming, with severity scores for each category.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🧠</div>
+        <h3>Explainable AI</h3>
+        <p>Every prediction comes with a plain-language explanation, making it useful for non-native-speaking content moderators globally.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🌐</div>
+        <h3>API-Ready Output</h3>
+        <p>Structured JSON output makes it easy to integrate into any social media platform, comment system, or chat application.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ─────────────────────────────────────────────────────────────── -->
+  <footer>
+    <div><strong>SOLX</strong> &nbsp;·&nbsp; Team <strong>Inferno</strong></div>
+    <div class="footer-tags" style="margin-top:1rem;">
+      <span class="footer-tag">Tanglish NLP</span>
+      <span class="footer-tag">Sarcasm Detection</span>
+      <span class="footer-tag">Cultural AI</span>
+      <span class="footer-tag">Cyberbullying Detection</span>
+    </div>
+  </footer>
+
+  <!-- ── JAVASCRIPT ────────────────────────────────────────────────────────── -->
+  <script>
+    /* ── Simulated example dataset ─────────────────────────────────────────── */
+    const examples = [
+      {
+        input:      "Avaru periya Appatakar da, yenna pannuvanunga",
+        normalized: "Avar periya Aptakar da, enna pannuvanga",
+        normChanges:["'Avaru'→'Avar'", "'yenna'→'enna'", "'pannuvanunga'→'pannuvanga'"],
+        score: 82,
+        title: "High Risk — Sarcastic Mockery Detected",
+        badges: ["sarcasm","bully"],
+        context: true,
+        phrase: "Avaru periya Appatakar",
+        explanation: "\"Appatakar\" (lit. Appadurai, a common name) is used in Tamil meme culture as a sarcastic title meaning 'supposedly great/smart person.' The phrase is commonly deployed to mock someone who is acting superior or pretending to be highly intelligent. Origin: widely circulated as a Tanglish meme template from 2019 onwards.",
+        meta: ["🎭 Sarcasm", "😤 Mockery", "📱 Meme Template", "Severity: High"]
+      },
+      {
+        input:      "Yenna koduma saravanan idhu",
+        normalized: "Enna koduma saravanan idhu",
+        normChanges:["'Yenna'→'Enna' (phonetic variant)"],
+        score: 68,
+        title: "Moderate Risk — Cultural Sarcasm Detected",
+        badges: ["sarcasm"],
+        context: true,
+        phrase: "Yenna koduma saravanan idhu",
+        explanation: "A direct reference to a famous dialogue by comedian Vadivelu from the Tamil film 'Imsai Arasan 23ám Pulikési' (2006). In modern meme culture this phrase is used to express exaggerated disbelief, dismay, or to sarcastically call out someone's actions as outrageous. Context determines if it is playful banter or targeted harassment.",
+        meta: ["🎬 Movie Dialogue", "🎭 Sarcasm", "🎥 Vadivelu Reference", "Severity: Moderate"]
+      },
+      {
+        input:      "Super da machaan, keep it up! Romba nalla panre!",
+        normalized: "Super da machaan, keep it up! Romba nalla panre!",
+        normChanges:[],
+        score: 4,
+        title: "Clean — No Threats Detected",
+        badges: ["clean"],
+        context: false,
+        phrase: "", explanation: "", meta: []
+      },
+      {
+        input:      "Dei nee enna panna pore, useless fella",
+        normalized: "Di nee enna panna pore, useless fella",
+        normChanges:["'Dei'→'Di' (normalised gender-neutral form)"],
+        score: 74,
+        title: "High Risk — Direct Harassment Detected",
+        badges: ["toxic","bully"],
+        context: false,
+        phrase: "",
+        explanation: "",
+        meta: []
+      }
+    ];
+
+    function loadExample(idx) {
+      document.getElementById('comment-input').value = examples[idx].input;
+      clearResults();
+    }
+
+    function clearResults() {
+      document.getElementById('loader').classList.remove('visible');
+      document.getElementById('score-card').classList.remove('visible');
+      document.getElementById('context-card').classList.remove('visible');
+      document.getElementById('clean-card').classList.remove('visible');
+      document.getElementById('normalizer-out').classList.remove('visible');
+    }
+
+    function analyze() {
+      const input = document.getElementById('comment-input').value.trim();
+      if (!input) return;
+
+      clearResults();
+
+      // Match example or use default response
+      let data = examples.find(e => e.input.toLowerCase() === input.toLowerCase())
+                 || {
+                   input, normalized: input,
+                   normChanges: [],
+                   score: 45, title: "Moderate Risk — Review Recommended",
+                   badges: ["toxic"],
+                   context: false, phrase: "", explanation: "", meta: []
+                 };
+
+      const loader = document.getElementById('loader');
+      const stages = [
+        "Running Typo & Slang Normalizer…",
+        "Feeding normalized text to classifier…",
+        "Running Cultural Context Engine…",
+        "Compiling results…"
+      ];
+      let stageIdx = 0;
+      loader.classList.add('visible');
+      document.getElementById('loader-stage').textContent = stages[0];
+
+      const stageInterval = setInterval(() => {
+        stageIdx = Math.min(stageIdx + 1, stages.length - 1);
+        document.getElementById('loader-stage').textContent = stages[stageIdx];
+      }, 450);
+
+      setTimeout(() => {
+        clearInterval(stageInterval);
+        loader.classList.remove('visible');
+        showResults(data);
+      }, 2000);
+    }
+
+    function showResults(data) {
+      /* Normalizer */
+      if (data.normChanges && data.normChanges.length > 0) {
+        document.getElementById('normalized-text').textContent = data.normalized;
+        const tagsEl = document.getElementById('norm-tags');
+        tagsEl.innerHTML = data.normChanges.map(t => `<span class="norm-tag">${t}</span>`).join('');
+        document.getElementById('normalizer-out').classList.add('visible');
+      }
+
+      /* Score ring */
+      const isClean = data.score < 10;
+      if (!isClean) {
+        const card = document.getElementById('score-card');
+        const ring = document.getElementById('ring-fill');
+        const scoreNum = document.getElementById('score-num');
+        const title = document.getElementById('score-title');
+        const badgesEl = document.getElementById('badges');
+        const circumference = 238.76;
+        const offset = circumference - (data.score / 100) * circumference;
+
+        // Ring color
+        const ringColor = data.score >= 75 ? '#F87171' : data.score >= 50 ? '#FBBF24' : '#60A5FA';
+        ring.setAttribute('stroke', ringColor);
+
+        card.classList.add('visible');
+        title.textContent = data.title;
+        scoreNum.style.color = ringColor;
+
+        // Animate ring
+        setTimeout(() => {
+          ring.style.strokeDashoffset = offset;
+          let start = 0;
+          const dur = 1000;
+          const startTime = performance.now();
+          function tick(now) {
+            const elapsed = now - startTime;
+            const progress = Math.min(elapsed / dur, 1);
+            scoreNum.textContent = Math.round(progress * data.score);
+            if (progress < 1) requestAnimationFrame(tick);
+          }
+          requestAnimationFrame(tick);
+        }, 50);
+
+        // Badges
+        badgesEl.innerHTML = data.badges.map(b => {
+          const labels = { toxic:'⚠️ Toxic', sarcasm:'😏 Sarcasm', bully:'🎯 Cyberbullying', clean:'✅ Clean' };
+          return `<span class="badge ${b}"><span class="badge-dot"></span>${labels[b] || b}</span>`;
+        }).join('');
+
+        /* Context card */
+        if (data.context && data.phrase) {
+          setTimeout(() => {
+            document.getElementById('ctx-phrase').textContent = `"${data.phrase}"`;
+            document.getElementById('ctx-explanation').textContent = data.explanation;
+            document.getElementById('ctx-meta').innerHTML = data.meta.map(m => `<span class="meta-tag">${m}</span>`).join('');
+            document.getElementById('context-card').classList.add('visible');
+          }, 300);
+        }
+      } else {
+        setTimeout(() => document.getElementById('clean-card').classList.add('visible'), 100);
+      }
+    }
+
+    /* ── Enter key support ─────────────────────────────────────────────────── */
+    document.getElementById('comment-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter' && e.ctrlKey) analyze();
+    });
+  </script>
+</body>
+</html>
