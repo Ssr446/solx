@@ -631,7 +631,7 @@
               <div class="chip" onclick="loadExample(3)">Dei nee enna panna pore</div>
               <div class="chip" onclick="loadExample(4)">Periya Einstein vandhutar parunga</div>
               <div class="chip" onclick="loadExample(5)">Kulla naaye unakku enna theriyum</div>
-              <div class="chip" onclick="loadExample(6)">Ada paavi nee pannitu poi thoonga</div>
+              <div class="chip" onclick="loadExample(6)">Nee oru thevai illatha fellow da</div>
               <div class="chip" onclick="loadExample(7)">Semma work da, keep going bro!</div>
             </div>
 
@@ -828,16 +828,16 @@
         meta: []
       },
       {
-        input:      "Ada paavi nee pannitu poi thoonga",
-        normalized: "Ada paavi nee pannitu poi thoonga",
+        input:      "Nee oru thevai illatha fellow da",
+        normalized: "Nee oru thevai illatha fellow da",
         normChanges:[],
-        score: 62,
-        title: "Moderate Risk — Hostile Language Detected",
-        badges: ["toxic"],
-        context: false,
-        phrase: "",
-        explanation: "",
-        meta: []
+        score: 65,
+        title: "High Risk — Personal Abuse Detected",
+        badges: ["toxic","bully"],
+        context: true,
+        phrase: "Thevai illatha fellow",
+        explanation: "\"Thevai illatha\" (lit. 'not needed / worthless') combined with \"fellow\" is a common Tanglish insult used to directly dismiss someone's worth or existence. Unlike coded sarcasm, this is a straightforward personal attack telling someone they are unnecessary or unwanted. Widely seen in Tamil social media comment sections to demean or exclude individuals from a group.",
+        meta: ["⚠️ Personal Abuse", "🎯 Direct Targeting", "💬 Tanglish Slang", "Severity: High"]
       },
       {
         input:      "Semma work da, keep going bro!",
