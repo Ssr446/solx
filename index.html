@@ -589,7 +589,26 @@
   <section id="demo" style="padding: 4rem 2rem 6rem; max-width: 1100px; margin: 0 auto;">
     <div class="section-tag">Interactive Demo</div>
     <h2 class="section-title">Try SOLX</h2>
-    <p class="section-sub">Type a Tanglish comment below, or click an example to see the AI pipeline in action.</p>
+    <p class="section-sub">Click any example phrase below to see the full AI pipeline in action.</p>
+
+    <!-- Prototype notice -->
+    <div style="
+      margin-top: 1.5rem;
+      background: rgba(255,215,0,0.06);
+      border: 1px solid rgba(255,215,0,0.25);
+      border-left: 4px solid #FFD700;
+      border-radius: 12px;
+      padding: 0.85rem 1.2rem;
+      display: flex; align-items: flex-start; gap: 0.8rem;
+    ">
+      <div style="color:#FFD700; font-size:1rem; flex-shrink:0; margin-top:1px;">&#9888;</div>
+      <div>
+        <div style="font-size:0.78rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#FFD700; margin-bottom:0.3rem;">Prototype Notice</div>
+        <div style="font-size:0.85rem; color:#7AAB6E; line-height:1.6;">
+          This is a <strong style="color:#E8FFE0;">simulated front-end demo</strong>. Full pipeline results are pre-defined for the 8 listed example phrases below. Any other text you type will return a generic placeholder response. The actual production model would process any Tanglish input in real time via a FastAPI backend.
+        </div>
+      </div>
+    </div>
 
     <div class="demo-grid" style="margin-top:2.5rem;">
 
@@ -610,6 +629,10 @@
               <div class="chip" onclick="loadExample(1)">Yenna koduma saravanan idhu</div>
               <div class="chip" onclick="loadExample(2)">Super da machaan, keep it up!</div>
               <div class="chip" onclick="loadExample(3)">Dei nee enna panna pore</div>
+              <div class="chip" onclick="loadExample(4)">Periya Einstein vandhutar parunga</div>
+              <div class="chip" onclick="loadExample(5)">Kulla naaye unakku enna theriyum</div>
+              <div class="chip" onclick="loadExample(6)">Ada paavi nee pannitu poi thoonga</div>
+              <div class="chip" onclick="loadExample(7)">Semma work da, keep going bro!</div>
             </div>
 
             <button id="analyze-btn" onclick="analyze()">
@@ -779,6 +802,52 @@
         phrase: "",
         explanation: "",
         meta: []
+      },
+      {
+        input:      "Periya Einstein vandhutar parunga",
+        normalized: "Periya Einstein vandhutaar parunga",
+        normChanges:["'vandhutar'→'vandhutaar' (verb suffix correction)"],
+        score: 70,
+        title: "Moderate Risk — Intellectual Mockery Detected",
+        badges: ["sarcasm","bully"],
+        context: true,
+        phrase: "Periya Einstein vandhutar",
+        explanation: "\"Periya Einstein vandhutaar\" (lit. 'The great Einstein has arrived') is a widely used Tanglish sarcasm template. The speaker invokes Einstein's name hyperbolically to mock someone who is acting overly smart or correcting others unnecessarily. This is not a direct film reference — it is a standalone internet meme format rooted in Tamil irony culture, typically used to belittle or embarrass the target publicly.",
+        meta: ["🎭 Sarcasm", "😤 Intellectual Mockery", "📱 Meme Template", "Severity: Moderate"]
+      },
+      {
+        input:      "Kulla naaye unakku enna theriyum",
+        normalized: "Kulla naaye unakku enna theriyum",
+        normChanges:[],
+        score: 91,
+        title: "Very High Risk — Body Shaming & Abuse Detected",
+        badges: ["toxic","bully"],
+        context: false,
+        phrase: "",
+        explanation: "",
+        meta: []
+      },
+      {
+        input:      "Ada paavi nee pannitu poi thoonga",
+        normalized: "Ada paavi nee pannitu poi thoonga",
+        normChanges:[],
+        score: 62,
+        title: "Moderate Risk — Hostile Language Detected",
+        badges: ["toxic"],
+        context: false,
+        phrase: "",
+        explanation: "",
+        meta: []
+      },
+      {
+        input:      "Semma work da, keep going bro!",
+        normalized: "Semma work da, keep going bro!",
+        normChanges:[],
+        score: 3,
+        title: "Clean — No Threats Detected",
+        badges: ["clean"],
+        context: false,
+        phrase: "", explanation: "", meta: []
       }
     ];
 
