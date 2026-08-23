@@ -41,7 +41,7 @@ class SOLXClassifier:
             return scores
         except Exception as e:
             print(f"Inference error: {e}")
-            return {"Toxic": 0.0, "Sarcastic": 0.0, "Cyberbullying": 0.0}
+            return {"Toxic": 0.0, "Sarcastic": 0.0, "Cyberbullying": 0.0, "error_msg": str(e)}
 
     def _mock_predict(self, text: str) -> Dict[str, float]:
         import random

@@ -51,20 +51,33 @@ def analyze_text(request: AnalyzeRequest):
         
     # Build explanation
     if primary_label == "Safe":
-        explanation = "This comment does not appear to contain harmful or sarcastic intent."
-        severity = "Safe"
+        context = {
+            "explanation": "This comment does not appear to contain harmful or sarcastic intent.",
+            "severity": "Safe",
+            "primary_label": "Safe",
+            "cultural_reference": context_result.source
+        }
     else:
-        explanation = f"Flagged for {primary_label} due to the phrase '{context_result.phrase}'. {context_result.explanation}"
-        severity = context_result.severity
+        context = {
+            "explanation": f"Flagged for {primary_label} due to the phrase '{context_result.phrase}'. {context_result.explanation}",
+            "severity": context_result.severity,
+            "primary_label": primary_label,
+            "cultural_reference": context_result.source
+        }
+        
+    # Compile response
+    explanation = context["explanation"]
+    if "error_msg" in scores:
+        explanation = "BACKEND INFERENCE ERROR: " + scores.pop("error_msg")
         
     return AnalyzeResponse(
         original_text=original_text,
         normalized_text=normalized_text,
         scores=scores,
-        primary_label=primary_label,
+        primary_label=context["primary_label"],
         explanation=explanation,
-        cultural_reference=context_result.source,
-        severity=severity
+        cultural_reference=context["cultural_reference"],
+        severity=context["severity"]
     )
 
 if __name__ == "__main__":
