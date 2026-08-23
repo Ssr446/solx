@@ -57,8 +57,4 @@ Simply open `index.html` or `solx_app.html` in your web browser.
 
 *(Note: To test local changes, ensure you update the `fetch()` URL in the JavaScript files to point back to `localhost:8000` instead of the live Render URL).*
 
-## 👥 Team Inferno
-Built for the NLP Hackathon 2026.
-* **Y Roshni** 
-* **Sai Shivaram LN** 
-* **Archana Ramesh**
+
