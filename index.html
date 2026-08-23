@@ -507,24 +507,51 @@
       SOLX
       <span>by Team Inferno</span>
     </div>
-    <div class="nav-links">
+    
+    <div class="nav-links" style="flex: 1; justify-content: center;">
+      <div style="display: flex; gap: 1rem; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: #3D5E37; text-transform: uppercase;">
+        <div><span style="display:inline-block; width:6px; height:6px; background:#39FF14; border-radius:50%; box-shadow:0 0 8px #39FF14; margin-right:6px;"></span>SYS_OK</div>
+        <div style="opacity:0.5;">|</div>
+        <div>MODEL: SVC-1.2</div>
+      </div>
+      <div style="width: 1px; height: 16px; background: rgba(57,255,20,0.15); margin: 0 1rem;"></div>
       <a href="#how-it-works">How It Works</a>
       <a href="#demo">Live Demo</a>
       <a href="#features">Features</a>
     </div>
+    <a href="solx_app.html" style="
+      background: linear-gradient(135deg, #1AB008, #2CE010);
+      color: #030603; font-weight: 800; font-size: 0.82rem;
+      padding: 9px 22px; border-radius: 100px;
+      text-decoration: none; letter-spacing: 0.04em;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 16px rgba(57,255,20,0.4);
+    " onmouseover="this.style.boxShadow='0 4px 28px rgba(57,255,20,0.7)'" onmouseout="this.style.boxShadow='0 2px 16px rgba(57,255,20,0.4)'">
+      Execute Live System
+    </a>
   </nav>
 
   <!-- ── HERO ─────────────────────────────────────────────────────────────── -->
   <section class="hero fade-in">
-    <div class="hero-tag">Tamil Digital Safety • AI-Powered</div>
+    <div style="position: absolute; top: 0px; left: 50%; transform: translateX(-50%); font-size: clamp(4rem, 10vw, 8rem); font-weight: 800; color: rgba(57,255,20,0.02); z-index: -1; white-space: nowrap; pointer-events: none;">தமிழ்-ஆங்கிலம் பகுப்பாய்வு</div>
+    <div class="hero-tag">தமிழ் டிஜிட்டல் பாதுகாப்பு • AI-Powered</div>
+    <div style="font-size: 0.9rem; font-weight: 600; color: #39FF14; letter-spacing: 0.1em; margin-bottom: 0.8rem; text-transform: uppercase;">தமிழ்-ஆங்கிலம் உரை பகுப்பாய்வு (Tamil-English Text Analysis)</div>
     <h1>
       Detect Toxicity in<br/>
       <span class="grad">Tanglish, Natively.</span>
     </h1>
-    <p class="hero-backronym" style="font-size:0.82rem;letter-spacing:0.08em;color:var(--violet-400);font-weight:600;margin-bottom:0.6rem;">
+    <p class="hero-backronym" style="font-size:0.82rem;letter-spacing:0.08em;color:var(--violet-400);font-weight:600;margin-bottom:1.5rem;">
       <span style="color:var(--blue-400)">S</span>arcasm &amp; <span style="color:var(--blue-400)">O</span>nline harm <span style="color:var(--blue-400)">L</span>ocator with e<span style="color:var(--blue-400)">X</span>plainability
     </p>
-    <p class="hero-sub">
+    <div style="margin: 0 auto 1.5rem; max-width: 650px; padding: 1.2rem; background: rgba(200,255,0,0.03); border: 1px solid rgba(200,255,0,0.15); border-radius: 12px; backdrop-filter: blur(10px);">
+      <p style="font-size: 1.25rem; color: #C8FF00; font-weight: 500; line-height: 1.6;">
+        "தீயினாற் சுட்டபுண் உள்ளாறும் ஆறாதே<br/>நாவினாற் சுட்ட வடு."
+      </p>
+      <p style="font-size: 0.85rem; color: var(--text-300); margin-top: 0.8rem; letter-spacing: 0.02em;">
+        — <strong>Thirukkural 129</strong> (The wound burnt by fire heals; the scar burnt by the tongue never heals.)
+      </p>
+    </div>
+    <p class="hero-sub" style="margin-top: 0;">
       SOLX understands the cultural nuances, pop-culture sarcasm, and spelling chaos of modern Tanglish — so your platform doesn't have to guess.
     </p>
     <div class="hero-pills">
@@ -567,18 +594,21 @@
       <div class="step-card s1 fade-in">
         <div class="step-num">01</div>
         <h3>Typo & Slang Normalization</h3>
+        <div style="font-family: 'Outfit', sans-serif; font-size: 0.75rem; color: rgba(122,171,110,0.5); font-weight: 400; letter-spacing: 0.05em; margin-bottom: 0.5rem;">வார்த்தை திருத்தம்</div>
         <p>Phonetic mapping and character-level embeddings standardize dozens of spelling variations ("enna", "yenna", "ena") into a unified root form before classification.</p>
         <span class="step-tag">Preprocessing Layer</span>
       </div>
       <div class="step-card s2 fade-in">
         <div class="step-num">02</div>
         <h3>Multi-Label Classification</h3>
+        <div style="font-family: 'Outfit', sans-serif; font-size: 0.75rem; color: rgba(122,171,110,0.5); font-weight: 400; letter-spacing: 0.05em; margin-bottom: 0.5rem;">வகைப்பாடு</div>
         <p>A fine-tuned transformer model classifies the normalized text into Toxic, Sarcastic, or Cyberbullying categories with a confidence score for each label.</p>
         <span class="step-tag">Core NLP Model</span>
       </div>
       <div class="step-card s3 fade-in">
         <div class="step-num">03</div>
         <h3>Cultural Context Explainer</h3>
+        <div style="font-family: 'Outfit', sans-serif; font-size: 0.75rem; color: rgba(122,171,110,0.5); font-weight: 400; letter-spacing: 0.05em; margin-bottom: 0.5rem;">பண்பாட்டு விளக்கம்</div>
         <p>When sarcasm is detected, a knowledge-base lookup identifies the Tamil movie dialogue, meme template, or cultural reference being used — and explains its intent to the moderator.</p>
         <span class="step-tag">Explainable AI Layer</span>
       </div>
@@ -601,7 +631,7 @@
       padding: 0.85rem 1.2rem;
       display: flex; align-items: flex-start; gap: 0.8rem;
     ">
-      <div style="color:#FFD700; font-size:1rem; flex-shrink:0; margin-top:1px;">&#9888;</div>
+      <div style="color:#FFD700; font-size:1rem; flex-shrink:0; margin-top:1px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
       <div>
         <div style="font-size:0.78rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#FFD700; margin-bottom:0.3rem;">Prototype Notice</div>
         <div style="font-size:0.85rem; color:#7AAB6E; line-height:1.6;">
@@ -710,32 +740,33 @@
 
     <div class="features-grid" style="margin-top:2.5rem;">
       <div class="feature-card fade-in">
-        <div class="feature-icon">🔤</div>
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:28px;height:28px;"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg></div>
         <h3>Tanglish-Native NLP</h3>
         <p>Phonetic normalization handles dozens of spelling variants per word, solving the core challenge of Tanglish's non-standard orthography.</p>
       </div>
       <div class="feature-card fade-in">
-        <div class="feature-icon">🎭</div>
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:28px;height:28px;"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg></div>
         <h3>Sarcasm Detection</h3>
         <p>Context-aware model goes beyond keyword matching to detect culturally nuanced sarcasm that generic models completely miss.</p>
       </div>
       <div class="feature-card fade-in">
-        <div class="feature-icon">🎬</div>
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:28px;height:28px;"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg></div>
         <h3>Cultural Context Engine</h3>
         <p>Identifies Tamil movie dialogues, meme templates, and regional references used as vehicles for mockery or harassment.</p>
       </div>
       <div class="feature-card fade-in">
-        <div class="feature-icon">🏷️</div>
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:28px;height:28px;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></div>
         <h3>Multi-Label Classification</h3>
+        <div style="font-family: 'Outfit', sans-serif; font-size: 0.75rem; color: rgba(122,171,110,0.5); font-weight: 400; letter-spacing: 0.05em; margin-bottom: 0.5rem;">வகைப்பாடு</div>
         <p>A single comment can be flagged simultaneously as Toxic + Sarcastic + Body Shaming, with severity scores for each category.</p>
       </div>
       <div class="feature-card fade-in">
-        <div class="feature-icon">🧠</div>
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:28px;height:28px;"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg></div>
         <h3>Explainable AI</h3>
         <p>Every prediction comes with a plain-language explanation, making it useful for non-native-speaking content moderators globally.</p>
       </div>
       <div class="feature-card fade-in">
-        <div class="feature-icon">🌐</div>
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:28px;height:28px;"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
         <h3>API-Ready Output</h3>
         <p>Structured JSON output makes it easy to integrate into any social media platform, comment system, or chat application.</p>
       </div>
@@ -767,7 +798,7 @@
         context: true,
         phrase: "Avaru periya Appatakar",
         explanation: "\"Appatakar\" (lit. Appadurai, a common name) is used in Tamil meme culture as a sarcastic title meaning 'supposedly great/smart person.' The phrase is commonly deployed to mock someone who is acting superior or pretending to be highly intelligent. Origin: widely circulated as a Tanglish meme template from 2019 onwards.",
-        meta: ["🎭 Sarcasm", "😤 Mockery", "📱 Meme Template", "Severity: High"]
+        meta: ["<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:28px;height:28px;"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg> Sarcasm", "Mockery Intent", "Meme Database", "Severity: High"]
       },
       {
         input:      "Yenna koduma saravanan idhu",
@@ -779,7 +810,7 @@
         context: true,
         phrase: "Yenna koduma saravanan idhu",
         explanation: "A direct reference to a famous dialogue by actor Prabhu from the Tamil film 'Chandramukhi' (2005), where his character Saravanan exclaims in shock and disbelief at the unfolding supernatural events. In modern Tanglish meme culture, this phrase is widely used to express dramatic outrage or sarcastic disbelief at someone's actions. Context determines if it is playful banter or targeted mockery.",
-        meta: ["🎬 Movie Dialogue", "🎭 Sarcasm", "🎥 Prabhu · Chandramukhi", "Severity: Moderate"]
+        meta: ["<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:28px;height:28px;"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg> Movie Dialogue", "<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:28px;height:28px;"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg> Sarcasm", "Prabhu (Chandramukhi)", "Severity: Moderate"]
       },
       {
         input:      "Super da machaan, keep it up! Romba nalla panre!",
@@ -813,7 +844,7 @@
         context: true,
         phrase: "Periya Einstein vandhutar",
         explanation: "\"Periya Einstein vandhutaar\" (lit. 'The great Einstein has arrived') is a widely used Tanglish sarcasm template. The speaker invokes Einstein's name hyperbolically to mock someone who is acting overly smart or correcting others unnecessarily. This is not a direct film reference — it is a standalone internet meme format rooted in Tamil irony culture, typically used to belittle or embarrass the target publicly.",
-        meta: ["🎭 Sarcasm", "😤 Intellectual Mockery", "📱 Meme Template", "Severity: Moderate"]
+        meta: ["<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:28px;height:28px;"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg> Sarcasm", "😤 Intellectual Mockery", "Meme Database", "Severity: Moderate"]
       },
       {
         input:      "Kulla naaye unakku enna theriyum",
@@ -864,21 +895,11 @@
       document.getElementById('normalizer-out').classList.remove('visible');
     }
 
-    function analyze() {
+    async function analyze() {
       const input = document.getElementById('comment-input').value.trim();
       if (!input) return;
 
       clearResults();
-
-      // Match example or use default response
-      let data = examples.find(e => e.input.toLowerCase() === input.toLowerCase())
-                 || {
-                   input, normalized: input,
-                   normChanges: [],
-                   score: 45, title: "Moderate Risk — Review Recommended",
-                   badges: ["toxic"],
-                   context: false, phrase: "", explanation: "", meta: []
-                 };
 
       const loader = document.getElementById('loader');
       const stages = [
@@ -896,11 +917,72 @@
         document.getElementById('loader-stage').textContent = stages[stageIdx];
       }, 450);
 
-      setTimeout(() => {
+      try {
+        const response = await fetch('http://localhost:8000/analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: input })
+        });
+        
+        if (!response.ok) {
+          throw new Error('API request failed');
+        }
+        
+        const apiData = await response.json();
+        
+        // Transform apiData into the format expected by showResults
+        let maxScore = 0;
+        let badges = [];
+        if (apiData.scores) {
+           for (const [key, value] of Object.entries(apiData.scores)) {
+              if (value > maxScore) maxScore = value;
+              if (value >= 30) {
+                 if (key === 'Cyberbullying') badges.push('bully');
+                 else if (key === 'Sarcastic') badges.push('sarcasm');
+                 else badges.push(key.toLowerCase());
+              }
+           }
+        }
+        if (badges.length === 0 || apiData.primary_label === 'Safe') {
+            badges = ['clean'];
+        }
+        
+        let title = "Clean — No Threats Detected";
+        if (maxScore >= 75) title = "High Risk — Content Flagged";
+        else if (maxScore >= 30) title = "Moderate Risk — Review Recommended";
+        
+        let context = false;
+        let meta = [];
+        let phrase = "";
+        if (apiData.cultural_reference && apiData.cultural_reference !== "General Language") {
+           context = true;
+           // We'll extract the phrase from the explanation or just use a generic label since 
+           // the API explanation string already contains it
+           phrase = "Detected Phrase"; 
+           meta = [`Severity: ${apiData.severity}`, "Cultural Context Detected"];
+        }
+        
+        const data = {
+           normalized: apiData.normalized_text,
+           normChanges: apiData.original_text !== apiData.normalized_text ? ["Normalized by Backend"] : [],
+           score: Math.round(maxScore),
+           title: title,
+           badges: badges,
+           context: context,
+           phrase: phrase,
+           explanation: apiData.explanation,
+           meta: meta
+        };
+
         clearInterval(stageInterval);
         loader.classList.remove('visible');
         showResults(data);
-      }, 2000);
+      } catch (error) {
+        clearInterval(stageInterval);
+        loader.classList.remove('visible');
+        console.error(error);
+        alert('Failed to connect to backend. Make sure the FastAPI server is running on localhost:8000.');
+      }
     }
 
     function showResults(data) {
@@ -948,7 +1030,7 @@
 
         // Badges
         badgesEl.innerHTML = data.badges.map(b => {
-          const labels = { toxic:'⚠️ Toxic', sarcasm:'😏 Sarcasm', bully:'🎯 Cyberbullying', clean:'✅ Clean' };
+          const labels = { toxic:'Toxic', sarcasm:'😏 Sarcasm', bully:'Cyberbullying', clean:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:28px;height:28px;stroke-linecap:round;stroke-linejoin:round;"><polyline points="20 6 9 17 4 12"></polyline></svg> Clean' };
           return `<span class="badge ${b}"><span class="badge-dot"></span>${labels[b] || b}</span>`;
         }).join('');
 
