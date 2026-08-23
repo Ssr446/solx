@@ -429,7 +429,7 @@
       }, 500);
 
       try {
-        const res = await fetch('http://localhost:8000/analyze', {
+        const res = await fetch('https://solx-backend.onrender.com/analyze', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ text })
@@ -442,7 +442,7 @@
       } catch(e) {
         clearInterval(stageTimer);
         loader.classList.remove('show');
-        alert('Connection Refused: Ensure the FastAPI backend is running on localhost:8000.');
+        alert('Connection Refused: Ensure the FastAPI backend is deployed and awake on Render.');
         console.error(e);
       }
     }
