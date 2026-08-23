@@ -40,6 +40,7 @@ def analyze_text(request: AnalyzeRequest):
     
     # Stage 2: Classify
     scores = classifier.predict(normalized_text)
+    error_msg = scores.pop("error_msg", None)
     
     # Stage 3: Explain (Cultural Context)
     context_result = context_engine.lookup(normalized_text)
@@ -67,8 +68,8 @@ def analyze_text(request: AnalyzeRequest):
         
     # Compile response
     explanation = context["explanation"]
-    if "error_msg" in scores:
-        explanation = "BACKEND INFERENCE ERROR: " + scores.pop("error_msg")
+    if error_msg:
+        explanation = "BACKEND INFERENCE ERROR: " + error_msg
         
     return AnalyzeResponse(
         original_text=original_text,
